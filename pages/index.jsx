@@ -1,9 +1,9 @@
-import abi from '../utils/BuyMeACoffee.json';
+import abi from "../utils/BuyMeACoffee.json";
 import { ethers } from "ethers";
-import Head from 'next/head'
-import Image from 'next/image'
+import Head from "next/head";
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import styles from '../styles/Home.module.css'
+import styles from "../styles/Home.module.css";
 
 export default function Home() {
   // Contract Address & ABI
@@ -18,18 +18,18 @@ export default function Home() {
 
   const onNameChange = (event) => {
     setName(event.target.value);
-  }
+  };
 
   const onMessageChange = (event) => {
     setMessage(event.target.value);
-  }
+  };
 
   // Wallet connection logic
   const isWalletConnected = async () => {
     try {
       const { ethereum } = window;
 
-      const accounts = await ethereum.request({ method: 'eth_accounts' })
+      const accounts = await ethereum.request({ method: "eth_accounts" });
       console.log("accounts: ", accounts);
 
       if (accounts.length > 0) {
@@ -41,7 +41,7 @@ export default function Home() {
     } catch (error) {
       console.log("error: ", error);
     }
-  }
+  };
 
   const connectWallet = async () => {
     try {
@@ -52,14 +52,14 @@ export default function Home() {
       }
 
       const accounts = await ethereum.request({
-        method: 'eth_requestAccounts'
+        method: "eth_requestAccounts",
       });
 
       setCurrentAccount(accounts[0]);
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   const buyCoffee = async () => {
     try {
@@ -74,7 +74,7 @@ export default function Home() {
           signer
         );
 
-        console.log("buying coffee..")
+        console.log("buying coffee..");
         const coffeeTxn = await buyMeACoffee.buyCoffee(
           name ? name : "anon",
           message ? message : "Enjoy your coffee!",
@@ -116,7 +116,6 @@ export default function Home() {
       } else {
         console.log("Metamask is not connected");
       }
-
     } catch (error) {
       console.log(error);
     }
@@ -137,8 +136,8 @@ export default function Home() {
           address: from,
           timestamp: new Date(timestamp * 1000),
           message,
-          name
-        }
+          name,
+        },
       ]);
     };
 
@@ -148,11 +147,7 @@ export default function Home() {
     if (ethereum) {
       const provider = new ethers.providers.Web3Provider(ethereum, "any");
       const signer = provider.getSigner();
-      buyMeACoffee = new ethers.Contract(
-        contractAddress,
-        contractABI,
-        signer
-      );
+      buyMeACoffee = new ethers.Contract(contractAddress, contractABI, signer);
 
       buyMeACoffee.on("NewMemo", onNewMemo);
     }
@@ -161,7 +156,7 @@ export default function Home() {
       if (buyMeACoffee) {
         buyMeACoffee.off("NewMemo", onNewMemo);
       }
-    }
+    };
   }, []);
 
   return (
@@ -173,17 +168,13 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Buy Antony a Coffee!
-        </h1>
+        <h1 className={styles.title}>Buy Antony a Coffee!</h1>
 
         {currentAccount ? (
           <div>
             <form>
               <div>
-                <label>
-                  Name
-                </label>
+                <label>Name</label>
                 <br />
 
                 <input
@@ -195,9 +186,7 @@ export default function Home() {
               </div>
               <br />
               <div>
-                <label>
-                  Send Antony a message
-                </label>
+                <label>Send Antony a message</label>
                 <br />
 
                 <textarea
@@ -206,34 +195,41 @@ export default function Home() {
                   id="message"
                   onChange={onMessageChange}
                   required
-                >
-                </textarea>
+                ></textarea>
               </div>
               <div>
-                <button
-                  type="button"
-                  onClick={buyCoffee}
-                >
+                <button type="button" onClick={buyCoffee}>
                   Send 1 Coffee for 0.001ETH
                 </button>
               </div>
             </form>
           </div>
         ) : (
-            <button onClick={connectWallet}> Connect your wallet </button>
-          )}
+          <button onClick={connectWallet}> Connect your wallet </button>
+        )}
       </main>
 
-      {currentAccount && (<h1>Memos received</h1>)}
+      {currentAccount && <h1>Memos received</h1>}
 
-      {currentAccount && (memos.map((memo, idx) => {
-        return (
-          <div key={idx} style={{ border: "2px solid", "borderRadius": "5px", padding: "5px", margin: "5px" }}>
-            <p style={{ "fontWeight": "bold" }}>"{memo.message}"</p>
-            <p>From: {memo.name} at {memo.timestamp.toString()}</p>
-          </div>
-        )
-      }))}
+      {currentAccount &&
+        memos.map((memo, idx) => {
+          return (
+            <div
+              key={idx}
+              style={{
+                border: "2px solid",
+                borderRadius: "5px",
+                padding: "5px",
+                margin: "5px",
+              }}
+            >
+              <p style={{ fontWeight: "bold" }}>"{memo.message}"</p>
+              <p>
+                From: {memo.name} at {memo.timestamp.toString()}
+              </p>
+            </div>
+          );
+        })}
 
       <footer className={styles.footer}>
         <a
@@ -241,9 +237,10 @@ export default function Home() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Created by @thatguyintech for Alchemy's Road to Web3 lesson two!
+          The Frontend was created by @thatguyintech for Alchemy's Road to Web3
+          week two!
         </a>
       </footer>
     </div>
-  )
+  );
 }
